@@ -75,15 +75,9 @@ export const menuList = [
     meta: { title: '收藏管理', icon: 'setting' }
   },
   {
-    name: 'record',
-    path: '/record',
-    component: '/record',
-    meta: { title: '浏览记录管理', icon: 'setting' }
-  },
-  {
-    name: 'census',
-    path: '/census',
-    component: '/census',
-    meta: { title: '统计中心', icon: 'setting' }
+    name: 'pictureManage',
+    path: '/pictureManage',
+    component: '/pictureManage',
+    meta: { title: '轮播图管理', icon: 'setting' }
   }
 ]

@@ -1,32 +1,141 @@
 <template>
-  <div class="system-log"><FormLists :formArr="formArr"></FormLists></div>
+  <div class="commodity-info flex-col-box">
+    <SearchFrom
+      ref="search"
+      :fromData="fromData"
+      :btnArr="btnArr"
+      @btnClick="operation"
+    ></SearchFrom>
+    <Table
+      :tableRow="tableRow"
+      :tableData="tableData"
+      :loading="loading"
+      @operateEvent="operateEvent"
+      class="flex-fill"
+    ></Table>
+    <Pagination ref="page" :total="total" class="flex-bot"></Pagination>
+  </div>
 </template>
 
 <script>
-import FormLists from '@/components/formLists'
+import SearchFrom from '@/components/searchFrom'
+import Table from '@/components/table'
+import Pagination from '@/components/pagination'
+import { getLogs, exportLogs, deleteLog } from '@/api/system'
+import { downloadFile } from '@/utils'
 export default {
-  name: 'system-log',
-  components: { FormLists },
+  name: 'commodity-info',
+  components: { SearchFrom, Table, Pagination },
   data() {
     return {
-      formArr: [
-        { type: 'upload', label: '用户头像', prop: 'avatar', upType: 'img' },
-        { type: 'input', label: '用户名', prop: 'username', req: true },
-        { type: 'input', label: '联系电话', prop: 'telephone', req: true, check: 'phone' },
-        { type: 'input', label: '邮箱', prop: 'email', req: true, check: 'email' },
-        { type: 'address', label: '地址', prop: 'address', req: true },
-        { type: 'input', label: '密码', prop: 'password', req: true, check: 'pass' },
+      fromData: [
+        {
+          type: 'date',
+          name: '创建时间',
+          key: ['updateStartTime', 'updateEndTime'],
+          value: []
+        },
         {
           type: 'input',
-          label: '确认密码',
-          prop: 'repassword',
-          req: true,
-          check: 'pass',
-          confirm: true
+          name: '用户名称',
+          key: 'username',
+          value: ''
         }
-      ]
+      ],
+      btnArr: [
+        { key: 'query', name: '查询' },
+        { key: 'export', name: '导出' },
+        { key: 'reset', name: '重置' }
+      ],
+      tableRow: [
+        { key: 'username', label: '用户名称' },
+        { key: 'loginTime', label: '创建时间' },
+        {
+          key: 'operate',
+          label: '操作',
+          fixed: 'right',
+          btn: [{ key: 'delete', name: '删除' }]
+        }
+      ],
+      tableData: [],
+      total: 0,
+      queryParam: {},
+      loading: false
     }
   },
-  mounted() {}
+  mounted() {
+    this.getData()
+  },
+  methods: {
+    operation(key) {
+      if (key == 'query') {
+        this.query()
+      } else if (key == 'reset') {
+        this.reset()
+      } else if (key == 'export') {
+        this.export()
+      }
+    },
+    query() {
+      this.queryParam = this.$refs.search.getValue()
+      this.$refs.page.resetPageNum()
+      this.getData()
+    },
+    reset() {
+      this.$refs.search.reset()
+    },
+    async export() {
+      try {
+        const res = await exportLogs(this.queryParam)
+        downloadFile(res, '用户信息')
+      } catch (error) {}
+    },
+    operateEvent(data) {
+      if (data.key == 'delete') {
+        this.delete(data.row)
+      }
+    },
+    delete(row) {
+      this.$confirm(`确认删除此日志？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteLog(row.id).then(res => {
+          if (res.code == 200) {
+            this.getData()
+            this.$message.success('删除成功')
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      })
+    },
+    async getData() {
+      try {
+        this.loading = true
+        const paging = this.$refs.page.getPage()
+        const res = await getLogs(this.queryParam, paging)
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.loading = false
+      } catch (error) {}
+    }
+  }
 }
 </script>
+<style lang="scss" scoped>
+.flex-col-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .flex-fill {
+    margin: 30px 0;
+  }
+  .flex-bot {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: right;
+  }
+}
+</style>

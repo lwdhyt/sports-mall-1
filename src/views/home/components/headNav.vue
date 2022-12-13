@@ -20,12 +20,16 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { getUserInfoByToken } from '@/api/user'
 export default {
   name: 'headNav',
   data() {
     return {}
   },
   computed: {},
+  created() {
+    this.getUserInfo()
+  },
   methods: {
     ...mapActions(['Logout']),
     handleCommand(command) {
@@ -33,8 +37,12 @@ export default {
         this.signOut()
       }
     },
+    async getUserInfo() {
+      try {
+        const res = await getUserInfoByToken()
+      } catch (error) {}
+    },
     signOut() {
-      console.log('123132')
       this.$confirm('确认推出登录？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -42,7 +50,7 @@ export default {
       })
         .then(() => {
           this.Logout().then(() => {
-            this.$message.success('已退出!')
+            window.location.reload()
           })
         })
         .catch(() => {})

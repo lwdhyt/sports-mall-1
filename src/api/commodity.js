@@ -2,7 +2,7 @@ import request from '@/utils/request'
 import axios from 'axios'
 
 // 获取商品列表
-export function getDatas(parameter, paging) {
+export function getCommodityDatas(parameter, paging) {
   return request({
     url: `/api/adminProducts/pageProductInfo/${paging.pageNum}/${paging.pageSize}`,
     method: 'post',
@@ -10,7 +10,7 @@ export function getDatas(parameter, paging) {
   })
 }
 // 导出商品
-export function exports(parameter) {
+export function exportCommodity(parameter) {
   return request({
     url: '/api/adminProducts/export',
     method: 'post',
@@ -24,5 +24,36 @@ export function getDetails(id) {
   return request({
     url: `/api/adminProducts/detail/${id}`,
     method: 'put'
+  })
+}
+
+// 改变商品状态（上架下架）
+export function changeCommodityState(id) {
+  return request({
+    url: `/api/adminProducts/updateStatus/${id}`,
+    method: 'GET'
+  })
+}
+// 删除商品
+export function deleteCommodity(id) {
+  return request({
+    url: `/api/adminProducts/delete/${id}`,
+    method: 'GET'
+  })
+}
+// 新增编辑商品信息
+export function saveCommodityInfo(parameter) {
+  return request({
+    url: '/api/adminProducts/saveOrUpdate',
+    method: 'POST',
+    data: parameter
+  })
+}
+
+// 改变商品推荐状态
+export function changeSellState(id) {
+  return request({
+    url: `/api/adminProducts/recommend/${id}`,
+    method: 'GET'
   })
 }

@@ -18,3 +18,53 @@ export function exports(parameter) {
     data: parameter
   })
 }
+// 编辑用户信息
+export function editUserInfo(parameter) {
+  return request({
+    url: '/api/userInfo/updateInfo',
+    method: 'put',
+    data: parameter
+  })
+}
+// 改变用户状态（启用禁用）
+export function changeUserState(id) {
+  return request({
+    url: `/api/userInfo/updateStatus/${id}`,
+    method: 'PUT'
+  })
+}
+
+// 删除用户
+export function deleteUser(id) {
+  return request({
+    url: `/api/userInfo/deleteUser/${id}`,
+    method: 'DELETE'
+  })
+}
+
+// 获取日志列表
+export function getLogs(parameter, paging) {
+  return request({
+    url: `/api/loginLogs/pageUser/${paging.pageNum}/${paging.pageSize}`,
+    method: 'post',
+    data: parameter
+  })
+}
+
+// 导出日志信息
+export function exportLogs(parameter) {
+  return request({
+    url: '/api/loginLogs/export',
+    method: 'post',
+    responseType: 'blob',
+    data: parameter
+  })
+}
+
+// 删除日志
+export function deleteLog(id) {
+  return request({
+    url: `/api/loginLogs/deleteLogs/${id}`,
+    method: 'DELETE'
+  })
+}

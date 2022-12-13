@@ -18,3 +18,12 @@ export function signUp(parameter) {
     data: parameter
   })
 }
+
+// 获取用户信息
+export function getUserInfoByToken(parameter) {
+  return request({
+    url: '/api/user/getUserInfoByToken',
+    method: 'GET',
+    data: parameter
+  })
+}

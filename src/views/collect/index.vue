@@ -21,7 +21,7 @@
 import SearchFrom from '@/components/searchFrom'
 import Table from '@/components/table'
 import Pagination from '@/components/pagination'
-import { getDatas, exports } from '@/api/collect'
+import { getCollectData, exportCollect, deleteCollect } from '@/api/collect'
 import { downloadFile } from '@/utils'
 export default {
   name: 'collect',
@@ -102,19 +102,40 @@ export default {
     },
     async export() {
       try {
-        const res = await exports({})
+        const res = await exportCollect({})
         downloadFile(res, '收藏信息')
       } catch (error) {}
     },
     operateEvent(data) {
-      console.log(data)
+      if (data.key == 'delete') {
+        this.delete(data.row)
+      }
     },
-
+    delete(row) {
+      this.$confirm(`确认删除此收藏？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const param = {
+          id: row.id,
+          type: 0
+        }
+        deleteCollect(param).then(res => {
+          if (res.code == 200) {
+            this.getData()
+            this.$message.success('删除成功')
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      })
+    },
     async getdata() {
       try {
         this.loading = true
         const paging = this.$refs.page.getPage()
-        const res = await getDatas(this.queryParam, paging)
+        const res = await getCollectData(this.queryParam, paging)
         this.tableData = res.data.records
         this.total = res.data.total
         this.loading = false

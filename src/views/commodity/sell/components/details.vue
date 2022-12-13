@@ -1,52 +1,18 @@
 <template>
   <el-dialog
-    title="订单详情"
+    title="商品详情"
     :visible.sync="childShow"
     :close-on-click-modal="false"
-    width="80%"
+    width="600px"
     :before-close="close"
     center
-  >
-    <div class="col-item">
-      <span class="label">订单编号:</span><span class="value">{{ data.orderNum }}</span>
-    </div>
-    <div class="col-item">
-      <span class="label">商品名称:</span
-      ><span class="value">{{ data?.orderProduct?.productName }}</span>
-    </div>
-    <div class="col-item">
-      <span class="label">商品主图:</span>
-      <div class="imges">
-        <img :src="data?.orderProduct?.sysFile?.filePath" alt="" />
-      </div>
-      <span class="label">商品展示图:</span>
-      <div class="imges">
-        <img :src="data?.orderProduct?.sysFileList?.filePath" alt="" />
-      </div>
-    </div>
-    <div class="col-item">
-      <span class="label">商品分类:</span
-      ><span class="value">{{ data?.orderProduct?.productType }}</span>
-    </div>
-    <div class="col-item">
-      <span class="label">订单总价:</span><span class="value">{{ data?.moneyTotal }}</span>
-    </div>
-    <div class="col-item">
-      <span class="label">优惠后总价:</span><span class="value">{{ data?.saleMoneyTotal }}</span>
-    </div>
-    <div class="col-item">
-      <span class="label">下单时间:</span><span class="value">{{ data?.orderTime }}</span>
-    </div>
-    <div class="col-item">
-      <span class="label">配送地址:</span><span class="value">{{ data?.address }}</span>
-    </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="close">关 闭</el-button>
-    </span>
+    ><Exhibition ref="exhibition" :formArr="formArr" :data="data"></Exhibition>
   </el-dialog>
 </template>
 <script>
+import Exhibition from '@/components/exhibition'
 export default {
+  components: { Exhibition },
   model: {
     prop: 'fatherShow',
     event: 'shoChange'
@@ -55,19 +21,34 @@ export default {
     fatherShow: {
       type: Boolean,
       default: false
-    },
-    data: {
-      type: Object,
-      default: null
     }
   },
   data() {
     return {
-      childShow: this.fatherShow
+      childShow: this.fatherShow,
+      formArr: [
+        { type: 'text', label: '商品名称', prop: 'productName' },
+        { type: 'text', label: '品牌商', prop: 'brandingBusiness' },
+        { type: 'img', label: '商品主图', prop: 'sysFile', url: 'filePath' },
+        { type: 'imgs', label: '商品展示图', prop: 'sysFileList', url: 'filePath' },
+        { type: 'text', label: '商品分类', prop: 'productType' },
+        { type: 'text', label: '进价', prop: 'purchasingPrice' },
+        { type: 'text', label: '原价', prop: 'originalPrice' },
+        { type: 'text', label: '促销价', prop: 'promotionPrice' },
+        { type: 'text', label: '排序', prop: 'sortNum' }
+      ],
+      data: null
     }
   },
   watch: {
     fatherShow(val) {
+      if (!val) {
+        this.$refs.exhibition.resetForm()
+      } else {
+        this.$nextTick(() => {
+          this.$refs.exhibition.echoData()
+        })
+      }
       this.childShow = val
     }
   },
@@ -85,32 +66,5 @@ export default {
 }
 ::v-deep.v-modal {
   position: absolute !important;
-}
-.col-item {
-  font-size: 20px;
-  line-height: 50px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  .label {
-    display: inline-block;
-    width: 150px;
-    text-align: right;
-    margin-right: 30px;
-  }
-  .imges {
-    width: 250px;
-    height: 150px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid rgba($color: #000000, $alpha: 0.3);
-    display: inline-block;
-    margin: 20px 10px 20px 0;
-    img {
-      max-height: 100%;
-      max-width: 100%;
-    }
-  }
 }
 </style>

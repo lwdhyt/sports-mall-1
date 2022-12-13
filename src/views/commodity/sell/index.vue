@@ -14,7 +14,8 @@
       class="flex-fill"
     ></Table>
     <Pagination ref="page" :total="total" class="flex-bot"></Pagination>
-    <Details v-model="detailsShow" :data="detailsInfo"></Details>
+    <Details ref="detail" v-model="detailsShow"></Details>
+    <Edit ref="edit" v-model="editShow" @refresh="getData"></Edit>
   </div>
 </template>
 
@@ -22,12 +23,13 @@
 import SearchFrom from '@/components/searchFrom'
 import Table from '@/components/table'
 import Pagination from '@/components/pagination'
-import { getDatas, exports, getDetails } from '@/api/commodity'
+import { getCommodityDatas, exportCommodity } from '@/api/commodity'
 import { downloadFile } from '@/utils'
 import Details from './components/details.vue'
+import Edit from './components/edit.vue'
 export default {
   name: 'commodity-info',
-  components: { SearchFrom, Table, Pagination, Details },
+  components: { SearchFrom, Table, Pagination, Details, Edit },
   data() {
     return {
       fromData: [
@@ -59,7 +61,7 @@ export default {
           type: 'select',
           name: '商品状态',
           key: 'productStatus',
-          option: this.$dict.order.state,
+          option: this.$dict.commodity.state,
           value: ''
         }
       ],
@@ -80,12 +82,10 @@ export default {
         {
           key: 'operate',
           label: '操作',
+          fixed: 'right',
           btn: [
             { key: 'details', name: '详情' },
-            { key: 'edit', name: '编辑' },
-            { key: 'upDown', name: '上架/下架' },
-            { key: 'delete', name: '删除' },
-            { key: 'sell', name: '推荐' }
+            { key: 'edit', name: '编辑' }
           ]
         }
       ],
@@ -94,11 +94,11 @@ export default {
       queryParam: {},
       loading: false,
       detailsShow: false,
-      detailsInfo: {}
+      editShow: false
     }
   },
   mounted() {
-    this.getdata()
+    this.getData()
   },
   methods: {
     operation(key) {
@@ -108,41 +108,49 @@ export default {
         this.reset()
       } else if (key == 'export') {
         this.export()
+      } else if (key == 'add') {
+        this.add()
       }
     },
     query() {
       this.queryParam = this.$refs.search.getValue()
       this.$refs.page.resetPageNum()
-      this.getdata()
+      this.getData()
     },
     reset() {
       this.$refs.search.reset()
     },
     async export() {
       try {
-        const res = await exports({})
-        downloadFile(res, '订单信息')
+        const res = await exportCommodity(this.queryParam)
+        downloadFile(res, '商品信息')
       } catch (error) {}
     },
+    add() {
+      this.$refs.edit.data = null
+      this.editShow = true
+    },
     operateEvent(data) {
-      console.log(data)
       if (data.key == 'details') {
         this.goDetails(data.row)
+      } else if (data.key == 'edit') {
+        this.edit(data.row)
       }
     },
-    async goDetails(row) {
-      try {
-        this.detailsInfo = await getDetails(row.id)
-      } catch (error) {
-        this.detailsInfo = row
-      }
+    goDetails(row) {
+      this.$refs.detail.data = row
       this.detailsShow = true
     },
-    async getdata() {
+    edit(row) {
+      this.$refs.edit.data = row
+      this.editShow = true
+    },
+    async getData() {
       try {
         this.loading = true
         const paging = this.$refs.page.getPage()
-        const res = await getDatas(this.queryParam, paging)
+        this.queryParam.isRecommend = 1
+        const res = await getCommodityDatas(this.queryParam, paging)
         this.tableData = res.data.records
         this.total = res.data.total
         this.loading = false

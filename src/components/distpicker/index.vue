@@ -45,7 +45,6 @@ export default {
   computed: {
     groupAddress: {
       get() {
-        this.$emit('addressChange', this.form.areaAddress + this.form.detailAddress)
         return this.form.areaAddress + this.form.detailAddress
       },
       set(val) {
@@ -55,32 +54,38 @@ export default {
         let provinceCode = ''
         let cityCode = ''
         let orgion = ''
-        sqs.forEach(item => {
-          if (item.search(RegExp(/.*?(省|自治区|行政区|北京市|天津市|上海市|重庆市)/)) != -1) {
-            provinceCode = item
-          } else if (item.search(RegExp(/.*?(市|自治州|辖区)/)) != -1) {
-            cityCode = item
-          } else {
-            orgion = item
-          }
-        })
-        this.selectedOptions = [
-          TextToCode[provinceCode]?.code || '',
-          TextToCode[provinceCode]?.[cityCode]?.code || '',
-          TextToCode[provinceCode]?.[cityCode]?.[orgion]?.code || ''
-        ]
-        this.form.areaAddress = provinceCode + cityCode + orgion
-        this.form.detailAddress = val.split(sqs[sqs.length - 1])[1]
+        if (sqs) {
+          sqs.forEach(item => {
+            if (item.search(RegExp(/.*?(省|自治区|行政区|北京市|天津市|上海市|重庆市)/)) != -1) {
+              provinceCode = item
+            } else if (item.search(RegExp(/.*?(市|自治州|辖区)/)) != -1) {
+              cityCode = item
+            } else {
+              orgion = item
+            }
+          })
+          this.selectedOptions = [
+            TextToCode[provinceCode]?.code || '',
+            TextToCode[provinceCode]?.[cityCode]?.code || '',
+            TextToCode[provinceCode]?.[cityCode]?.[orgion]?.code || ''
+          ]
+          this.form.areaAddress = provinceCode + cityCode + orgion
+          this.form.detailAddress = val.split(sqs[sqs.length - 1])[1]
+        } else {
+          this.form.detailAddress = val
+        }
       }
     }
   },
   watch: {
     address(val) {
       this.groupAddress = val
+    },
+    groupAddress(val) {
+      this.$emit('addressChange', val)
     }
   },
   created() {
-    console.log('this.address', this.address)
     this.groupAddress = this.address
   },
   methods: {
@@ -89,7 +94,6 @@ export default {
       const cityCode = CodeToText[value[1]]
       const orgion = CodeToText[value[2]]
       this.selectedOptions = [value[0], value[1], value[2]]
-      console.log('selectedOptions', this.selectedOptions)
       this.form.areaAddress = provinceCode + cityCode + orgion
     },
     validate() {

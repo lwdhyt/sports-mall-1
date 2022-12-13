@@ -14,7 +14,8 @@
       class="flex-fill"
     ></Table>
     <Pagination ref="page" :total="total" class="flex-bot"></Pagination>
-    <Details v-model="detailsShow" :data="detailsInfo"></Details>
+    <Details ref="detail" v-model="detailsShow"></Details>
+    <Edit ref="edit" v-model="editShow" @refresh="getData"></Edit>
   </div>
 </template>
 
@@ -22,12 +23,13 @@
 import SearchFrom from '@/components/searchFrom'
 import Table from '@/components/table'
 import Pagination from '@/components/pagination'
-import { getDatas, exports } from '@/api/system'
+import { getDatas, exports, changeUserState, deleteUser } from '@/api/system'
 import { downloadFile } from '@/utils'
 import Details from './components/details.vue'
+import Edit from './components/edit.vue'
 export default {
   name: 'commodity-info',
-  components: { SearchFrom, Table, Pagination, Details },
+  components: { SearchFrom, Table, Pagination, Details, Edit },
   data() {
     return {
       fromData: [
@@ -59,7 +61,7 @@ export default {
           type: 'select',
           name: '用户状态',
           key: 'userStatus',
-          option: this.$dict.order.state,
+          option: this.$dict.system.userStatus,
           value: ''
         },
         {
@@ -76,15 +78,17 @@ export default {
       ],
       tableRow: [
         { key: 'username', label: '用户名称' },
-        { key: 'avatar', label: '用户头像' },
+        { key: 'avatar', label: '用户头像', type: 'imger' },
+        { key: 'userType', label: '用户身份', dict: this.$dict.system.userType },
         { key: 'telephone', label: '联系电话' },
         { key: 'email', label: '用户邮箱' },
-        { key: 'userStatus', label: '用户状态', dict: this.$dict.commodity.state },
+        { key: 'userStatus', label: '用户状态', dict: this.$dict.system.userStatus },
         { key: 'address', label: '居住地址' },
         { key: 'updateTime', label: '更新时间' },
         {
           key: 'operate',
           label: '操作',
+          fixed: 'right',
           btn: [
             { key: 'details', name: '详情' },
             { key: 'edit', name: '编辑' },
@@ -98,11 +102,11 @@ export default {
       queryParam: {},
       loading: false,
       detailsShow: false,
-      detailsInfo: {}
+      editShow: false
     }
   },
   mounted() {
-    this.getdata()
+    this.getData()
   },
   methods: {
     operation(key) {
@@ -117,28 +121,70 @@ export default {
     query() {
       this.queryParam = this.$refs.search.getValue()
       this.$refs.page.resetPageNum()
-      this.getdata()
+      this.getData()
     },
     reset() {
       this.$refs.search.reset()
     },
     async export() {
       try {
-        const res = await exports({})
-        downloadFile(res, '订单信息')
+        const res = await exports(this.queryParam)
+        downloadFile(res, '用户信息')
       } catch (error) {}
     },
     operateEvent(data) {
-      console.log(data)
       if (data.key == 'details') {
         this.goDetails(data.row)
+      } else if (data.key == 'edit') {
+        this.edit(data.row)
+      } else if (data.key == 'upDown') {
+        this.changeState(data.row)
+      } else if (data.key == 'delete') {
+        this.delete(data.row)
       }
     },
-    async goDetails(row) {
-      this.detailsInfo = row
+    goDetails(row) {
+      this.$refs.detail.data = row
       this.detailsShow = true
     },
-    async getdata() {
+    edit(row) {
+      this.$refs.edit.data = row
+      this.editShow = true
+    },
+    changeState(row) {
+      const nowSta = row.userStatus == 1 ? '禁用' : '启用'
+      this.$confirm(`确认${nowSta}此账户？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        changeUserState(row.id).then(res => {
+          if (res.code == 200) {
+            this.getData()
+            this.$message.success(nowSta + '成功')
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      })
+    },
+    delete(row) {
+      this.$confirm(`确认删除此账户？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteUser(row.id).then(res => {
+          if (res.code == 200) {
+            this.getData()
+            this.$message.success('删除成功')
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+      })
+    },
+    async getData() {
       try {
         this.loading = true
         const paging = this.$refs.page.getPage()
@@ -164,28 +210,5 @@ export default {
     display: flex;
     justify-content: right;
   }
-}
-::v-deep(.avatar-uploader .el-upload) {
-  border: 1px dashed rgba(0, 0, 0, 0.6);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-::v-deep(.avatar-uploader .el-upload:hover) {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
 }
 </style>

@@ -8,10 +8,8 @@
   >
     <el-form-item v-for="item in formArr" :key="item.prop" :label="item.label" :prop="item.prop">
       <template v-if="item.type == 'input'">
-        <el-input v-model="ruleForm[item.prop]"></el-input>
+        <el-input v-model="ruleForm[item.prop]" :placeholder="'请输入' + item.label"></el-input>
       </template>
-
-      <!-- :on-success="(res, file) => handleSuccess(res, file, item.prop)" -->
       <template v-else-if="item.type == 'upload'">
         <el-upload
           class="avatar-uploader"
@@ -19,11 +17,17 @@
           :show-file-list="false"
           :before-upload="file => beforeUpload(file, item.prop)"
         >
-          <img v-if="ruleForm.avatar" :src="ruleForm.avatar" class="avatar" />
+          <img v-if="ruleForm[item.prop]" :src="ruleForm[item.prop]" class="avatar" />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </template>
-
+      <template v-else-if="item.type == 'radio'">
+        <el-radio-group v-model="ruleForm[item.prop]">
+          <el-radio v-for="rad in item.dict" :key="rad.val" :label="rad.val">{{
+            rad.text
+          }}</el-radio>
+        </el-radio-group>
+      </template>
       <template v-else-if="item.type == 'address'">
         <Distpicker ref="distpicker" v-model="ruleForm[item.prop]"></Distpicker>
       </template>
@@ -53,6 +57,11 @@ export default {
     labelWidth: {
       type: Number,
       default: 100
+    },
+    // 回显数据
+    data: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -92,6 +101,11 @@ export default {
         }
       })
     },
+    echoData() {
+      Object.keys(this.ruleForm).forEach(key => {
+        this.ruleForm[key] = this.data?.[key]
+      })
+    },
     handleSuccess(res, file, prop) {
       this.ruleForm[prop] = URL.createObjectURL(file.raw)
     },
@@ -107,8 +121,7 @@ export default {
       const formData = new FormData()
       formData.append('multipartFile', file)
       uploadFiles(formData).then(res => {
-        this.ruleForm[prop] = res.data
-        console.log('this.ruleForm[prop]', this.ruleForm[prop])
+        this.ruleForm[prop] = res.data?.fileUrl
       })
       return false
     },
@@ -119,8 +132,18 @@ export default {
         }
       })
     },
+    getData() {
+      const params = {}
+      Object.keys(this.ruleForm).forEach(key => {
+        this.ruleForm[key] && (params[key] = this.ruleForm[key])
+      })
+      return params
+    },
     resetForm() {
       this.$refs.ruleForm.resetFields()
+      Object.keys(this.ruleForm).forEach(key => {
+        this.ruleForm[key] = ''
+      })
     }
   }
 }
@@ -151,6 +174,6 @@ export default {
   display: block;
 }
 ::v-deep .el-form-item__content {
-  line-height: 0;
+  // line-height: 0;
 }
 </style>

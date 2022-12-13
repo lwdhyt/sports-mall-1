@@ -46,7 +46,6 @@ const user = {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
         storage.remove(ACCESS_TOKEN)
-        this.$router.push('/user/login')
         resolve()
       })
     }

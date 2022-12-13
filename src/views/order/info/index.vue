@@ -14,7 +14,7 @@
       class="flex-fill"
     ></Table>
     <Pagination ref="page" :total="total" class="flex-bot"></Pagination>
-    <Details v-model="detailsShow" :data="detailsInfo"></Details>
+    <Details ref="detail" v-model="detailsShow"></Details>
   </div>
 </template>
 
@@ -22,7 +22,7 @@
 import SearchFrom from '@/components/searchFrom'
 import Table from '@/components/table'
 import Pagination from '@/components/pagination'
-import { getDatas, exports, getDetails } from '@/api/order'
+import { getOrderData, exportOrder, getOrderDetail, changeOrderState } from '@/api/order'
 import { downloadFile } from '@/utils'
 import Details from './components/details.vue'
 export default {
@@ -88,8 +88,7 @@ export default {
       total: 0,
       queryParam: {},
       loading: false,
-      detailsShow: false,
-      detailsInfo: {}
+      detailsShow: false
     }
   },
   mounted() {
@@ -115,7 +114,7 @@ export default {
     },
     async export() {
       try {
-        const res = await exports({})
+        const res = await exportOrder({})
         downloadFile(res, '订单信息')
       } catch (error) {}
     },
@@ -123,20 +122,44 @@ export default {
       console.log(data)
       if (data.key == 'details') {
         this.goDetails(data.row)
+      } else if (data.key == 'delivery') {
+        this.delivery(data.row)
       }
     },
     async goDetails(row) {
       try {
-        this.detailsInfo = await getDetails(row.id).then(res => res.data)
-        console.log('this.detailsInfo', this.detailsInfo)
+        const detailsInfo = await getOrderDetail(row.id).then(res => res.data)
+        this.$refs.detail.data = { ...detailsInfo, ...detailsInfo?.orderProduct }
         this.detailsShow = true
       } catch (error) {}
+    },
+    delivery(row) {
+      this.$confirm(`确认发货？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          const param = {
+            id: row.id,
+            state: 2
+          }
+          changeOrderState(param).then(res => {
+            if (res.code == 200) {
+              this.$message.success('发货成功')
+              this.getdata()
+            } else {
+              this.$message.error(res.msg)
+            }
+          })
+        })
+        .catch(() => {})
     },
     async getdata() {
       try {
         this.loading = true
         const paging = this.$refs.page.getPage()
-        const res = await getDatas(this.queryParam, paging)
+        const res = await getOrderData(this.queryParam, paging)
         this.tableData = res.data.records
         this.total = res.data.total
         this.loading = false
