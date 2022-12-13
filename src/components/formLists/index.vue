@@ -8,7 +8,20 @@
   >
     <el-form-item v-for="item in formArr" :key="item.prop" :label="item.label" :prop="item.prop">
       <template v-if="item.type == 'input'">
-        <el-input v-model="ruleForm[item.prop]" :placeholder="'请输入' + item.label"></el-input>
+        <el-input
+          v-model="ruleForm[item.prop]"
+          :placeholder="'请输入' + item.label"
+          clearable
+        ></el-input>
+      </template>
+
+      <template v-if="item.type == 'password'">
+        <el-input
+          show-password
+          clearable
+          v-model="ruleForm[item.prop]"
+          :placeholder="'请输入' + item.label"
+        ></el-input>
       </template>
       <template v-else-if="item.type == 'upload'">
         <el-upload
@@ -65,15 +78,6 @@ export default {
     }
   },
   data() {
-    var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
-      } else if (value !== this.passForm.password) {
-        callback(new Error('两次输入密码不一致!'))
-      } else {
-        callback()
-      }
-    }
     return {
       ruleForm: {},
       rules: {},
@@ -91,7 +95,18 @@ export default {
         if (item.req) {
           let check = []
           if (item.check) {
-            check = [{ required: true, trigger: 'blur', validator: checkGroup[item.check] }]
+            if (item.check != 'orPass') {
+              check = [{ required: true, trigger: 'blur', validator: checkGroup[item.check] }]
+            } else {
+              check = [
+                {
+                  required: true,
+                  trigger: 'blur',
+                  validator: (rule, value, callback) =>
+                    this.validatePass(rule, value, callback, item.link)
+                }
+              ]
+            }
           } else if (item.type == 'address') {
             check = [{ required: true, trigger: 'blur' }]
           } else {
@@ -101,6 +116,16 @@ export default {
         }
       })
     },
+    validatePass(rule, value, callback, link) {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.ruleForm[link]) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    },
+    // 回显
     echoData() {
       Object.keys(this.ruleForm).forEach(key => {
         this.ruleForm[key] = this.data?.[key]
@@ -122,12 +147,10 @@ export default {
       })
       return false
     },
-    checkFrom() {
-      this.$refs.ruleForm.validate(valid => {
-        if (this.$refs.distpicker.validate()) return
-        if (valid) {
-        }
-      })
+    async checkFrom() {
+      let valid = await this.$refs.ruleForm.validate()
+      this.$refs.distpicker && (valid = await this.$refs.distpicker.validate())
+      return valid
     },
     getData() {
       const params = {}

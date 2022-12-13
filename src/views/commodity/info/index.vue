@@ -2,7 +2,7 @@
   <div class="commodity-info flex-col-box">
     <SearchFrom
       ref="search"
-      :fromData="fromData"
+      :formData="formData"
       :btnArr="btnArr"
       @btnClick="operation"
     ></SearchFrom>
@@ -38,7 +38,7 @@ export default {
   components: { SearchFrom, Table, Pagination, Details, Edit },
   data() {
     return {
-      fromData: [
+      formData: [
         {
           type: 'date',
           name: '更新时间',

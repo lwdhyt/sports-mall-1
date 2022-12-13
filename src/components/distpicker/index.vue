@@ -8,10 +8,11 @@
         size="large"
         v-model="selectedOptions"
         placeholder="请选择您所在的城市"
+        clearable
       />
     </el-form-item>
     <el-form-item prop="detailAddress">
-      <el-input v-model="form.detailAddress" placeholder="详细地址"></el-input>
+      <el-input v-model="form.detailAddress" placeholder="详细地址" clearable></el-input>
     </el-form-item>
   </el-form>
 </template>
@@ -96,13 +97,9 @@ export default {
       this.selectedOptions = [value[0], value[1], value[2]]
       this.form.areaAddress = provinceCode + cityCode + orgion
     },
-    validate() {
-      this.$refs.ruleForm.validate(valid => {
-        if (valid) {
-          return true
-        }
-        return false
-      })
+    async validate() {
+      let valid = await this.$refs.ruleForm.validate()
+      return valid
     }
   }
 }

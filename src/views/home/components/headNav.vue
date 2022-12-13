@@ -14,20 +14,26 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <Details ref="detail" v-model="detailsShow"></Details>
+    <Details ref="detail" v-model="detailsShow" @edit="edit"></Details>
+    <Edit ref="edit" v-model="editShow" @refresh="getUserInfo"></Edit>
+    <EditPass ref="editPass" v-model="editPassShow" @refresh="getUserInfo"></EditPass>
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { getUserInfoByToken } from '@/api/user'
-import Details from '../../system/user/components/details.vue'
+import Details from './details.vue'
+import Edit from './edit.vue'
+import EditPass from './editPassword.vue'
 export default {
   name: 'headNav',
-  components: { Details },
+  components: { Details, Edit, EditPass },
   data() {
     return {
       userInfo: null,
-      detailsShow: false
+      detailsShow: false,
+      editShow: false,
+      editPassShow: false
     }
   },
   computed: {},
@@ -52,8 +58,20 @@ export default {
       this.$refs.detail.title = '个人信息'
       this.detailsShow = true
     },
-    editPassWord() {},
-    loginLog() {},
+    edit() {
+      this.detailsShow = false
+      this.$refs.edit.data = this.userInfo
+      setTimeout(() => {
+        this.editShow = true
+      }, 200)
+    },
+    editPassWord() {
+      this.$refs.editPass.data = this.userInfo
+      this.editPassShow = true
+    },
+    loginLog() {
+      this.$router.push({ name: 'systemLog', params: { username: this.userInfo.username } })
+    },
     async getUserInfo() {
       try {
         this.userInfo = await getUserInfoByToken().then(res => res.data)

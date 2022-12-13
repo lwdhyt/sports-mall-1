@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="用户详情"
+    title="修改密码"
     :visible.sync="childShow"
     :close-on-click-modal="false"
     width="600px"
@@ -15,7 +15,7 @@
 </template>
 <script>
 import FormLists from '@/components/formLists'
-import { editUserInfo } from '@/api/system'
+import { eidtPassword } from '@/api/user'
 export default {
   components: { FormLists },
   model: {
@@ -32,18 +32,16 @@ export default {
     return {
       childShow: this.fatherShow,
       formArr: [
-        { type: 'upload', label: '用户头像', prop: 'avatar', upType: 'img' },
-        { type: 'input', label: '用户名', prop: 'username', req: true },
+        { type: 'password', label: '旧密码', prop: 'oldPassword', req: true },
+        { type: 'password', label: '新密码', prop: 'newPassword', req: true, check: 'pass' },
         {
-          type: 'radio',
-          label: '用户身份',
-          prop: 'userType',
+          type: 'password',
+          label: '确认密码',
+          prop: 'orPassword',
           req: true,
-          dict: this.$dict.system.userType
-        },
-        { type: 'input', label: '联系电话', prop: 'telephone', req: true, check: 'phone' },
-        { type: 'input', label: '邮箱', prop: 'email', req: true, check: 'email' },
-        { type: 'address', label: '地址', prop: 'address', req: true }
+          check: 'orPass',
+          link: 'newPassword'
+        }
       ],
       data: null
     }
@@ -71,7 +69,7 @@ export default {
         if (valid) {
           const params = this.$refs.formlists.getData()
           params.id = this.data.id
-          const res = await editUserInfo(params)
+          const res = await eidtPassword(params)
           if (res.code == 200) {
             this.$message.success('编辑成功')
             this.close()

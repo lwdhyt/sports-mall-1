@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="用户详情"
+    title="编辑信息"
     :visible.sync="childShow"
     :close-on-click-modal="false"
     width="600px"

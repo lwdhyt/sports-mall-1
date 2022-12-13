@@ -2,7 +2,7 @@
   <div class="collect flex-col-box">
     <SearchFrom
       ref="search"
-      :fromData="fromData"
+      :formData="formData"
       :btnArr="btnArr"
       @btnClick="operation"
     ></SearchFrom>
@@ -28,7 +28,7 @@ export default {
   components: { SearchFrom, Table, Pagination },
   data() {
     return {
-      fromData: [
+      formData: [
         {
           type: 'date',
           name: '收藏时间',

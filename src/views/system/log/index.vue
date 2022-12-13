@@ -2,7 +2,7 @@
   <div class="commodity-info flex-col-box">
     <SearchFrom
       ref="search"
-      :fromData="fromData"
+      :formData="formData"
       :btnArr="btnArr"
       @btnClick="operation"
     ></SearchFrom>
@@ -28,7 +28,7 @@ export default {
   components: { SearchFrom, Table, Pagination },
   data() {
     return {
-      fromData: [
+      formData: [
         {
           type: 'date',
           name: '创建时间',
@@ -61,6 +61,11 @@ export default {
       total: 0,
       queryParam: {},
       loading: false
+    }
+  },
+  created() {
+    if (this.$route.params.username) {
+      this.formData.find(item => item.key == 'username').value = this.$route.params.username
     }
   },
   mounted() {

@@ -27,3 +27,11 @@ export function getUserInfoByToken(parameter) {
     data: parameter
   })
 }
+
+// 获取用户信息
+export function eidtPassword(parameter) {
+  return request({
+    url: `/api/user/modifyPassword/${parameter.newPassword}/${parameter.oldPassword}`,
+    method: 'PUT'
+  })
+}

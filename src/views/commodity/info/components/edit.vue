@@ -78,16 +78,19 @@ export default {
     },
     async confirm() {
       try {
-        const params = this.$refs.formlists.getData()
-        this.data && (params.id = this.data.id)
-        const res = await saveCommodityInfo(params)
-        if (res.code == 200) {
-          this.$message.success(this.pupType + '成功')
-        } else {
-          this.$message.error(res.msg)
+        const valid = await this.$refs.formlists.checkFrom()
+        if (valid) {
+          const params = this.$refs.formlists.getData()
+          this.data && (params.id = this.data.id)
+          const res = await saveCommodityInfo(params)
+          if (res.code == 200) {
+            this.$message.success(this.pupType + '成功')
+            this.close()
+            this.$emit('refresh')
+          } else {
+            this.$message.error(res.msg)
+          }
         }
-        this.close()
-        this.$emit('refresh')
       } catch (error) {}
     }
   }

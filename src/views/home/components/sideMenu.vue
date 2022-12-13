@@ -2,11 +2,11 @@
   <el-menu
     :default-active="editableTabsValue"
     class="el-menu-vertical-demo"
-    background-color="#545c64"
-    text-color="#fff"
+    background-color="rgb(32, 39, 65)"
+    text-color="hsla(0,0%,100%,.65)"
     :router="true"
     :default-openeds="defaultOpeneds"
-    active-text-color="#ffd04b"
+    active-text-color="#fff"
   >
     <template v-for="item in menuList">
       <el-submenu v-if="item.children" :index="item.path">
@@ -55,7 +55,16 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-::v-deep(.el-submenu .el-menu-item) {
+::v-deep .el-submenu .el-menu-item {
   padding-left: 50px !important;
+}
+::v-deep .el-menu-item.is-active {
+  background: linear-gradient(to right, #409eff 0%, #41a3fb 60%, #fff 100%) !important;
+}
+::v-deep .el-menu-item:hover {
+  background: linear-gradient(to right, #409eff 0%, #41a3fb 60%, #fff 100%) !important;
+}
+::v-deep .el-submenu .el-submenu__title:hover {
+  background-color: rgb(32, 39, 65) !important;
 }
 </style>
