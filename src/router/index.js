@@ -7,7 +7,11 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { menuList } from '@/config/menu'
 
 Vue.use(VueRouter)
-
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
 const routes = [
   {
     path: '/',
@@ -70,7 +74,9 @@ router.beforeEach((to, from, next) => {
           }
         }
       })
-      router.addRoutes(newRoutes)
+      for (let x of newRoutes) {
+        router.addRoute(x)
+      }
       hasRoute = true
       store.commit('changeRouteStatus', hasRoute)
       next({ ...to, replace: true })

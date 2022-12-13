@@ -106,9 +106,6 @@ export default {
         this.ruleForm[key] = this.data?.[key]
       })
     },
-    handleSuccess(res, file, prop) {
-      this.ruleForm[prop] = URL.createObjectURL(file.raw)
-    },
     beforeUpload(file, prop) {
       var testmsg = /^image\/(jpeg|png|jpg)$/.test(file.type)
       const isLt5M = file.size / 1024 / 1024 < 5
@@ -172,8 +169,5 @@ export default {
   width: 120px;
   height: 120px;
   display: block;
-}
-::v-deep .el-form-item__content {
-  // line-height: 0;
 }
 </style>

@@ -23,14 +23,14 @@
         <template v-else-if="item.type == 'img'">
           <el-image
             v-if="item.url"
-            style="width: 100px; height: 100px"
+            style="width: 200px; height: 100px"
             :src="ruleForm[item.prop]?.[item.url]"
             :preview-src-list="[ruleForm[item.prop]?.[item.url]]"
           >
           </el-image>
           <el-image
             v-else
-            style="width: 100px; height: 100px"
+            style="width: 200px; height: 100px"
             :src="ruleForm[item.prop]"
             :preview-src-list="[ruleForm[item.prop]]"
           >
@@ -39,7 +39,7 @@
         <template v-else-if="item.type == 'imgs'">
           <el-image
             v-if="item.url"
-            style="width: 100px; height: 100px"
+            style="width: 200px; height: 100px"
             :src="ruleForm[item.prop][0]?.[item.url]"
             :preview-src-list="
               ruleForm[item.prop]?.map(i => {
@@ -50,7 +50,7 @@
           </el-image>
           <el-image
             v-else
-            style="width: 100px; height: 100px"
+            style="width: 200px; height: 100px"
             :src="ruleForm[item.prop][0]"
             :preview-src-list="ruleForm[item.prop]"
           >
@@ -130,5 +130,19 @@ export default {
 }
 ::v-deep(.avatar-uploader .el-upload:hover) {
   border-color: #409eff;
+}
+::v-deep .el-image__error,
+::v-deep .el-image__inner,
+::v-deep .el-image__placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  max-height: 100%;
+  max-width: 100%;
+  height: auto;
+  width: auto;
 }
 </style>

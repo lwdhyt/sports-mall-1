@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="用户详情"
+    :title="title"
     :visible.sync="childShow"
     :close-on-click-modal="false"
     width="600px"
@@ -32,10 +32,10 @@ export default {
         { type: 'text', label: '用户身份', prop: 'userType', dict: this.$dict.system.userType },
         { type: 'text', label: '联系电话', prop: 'telephone' },
         { type: 'text', label: '邮箱', prop: 'email' },
-        { type: 'text', label: '地址', prop: 'address' },
-        { type: 'text', label: '密码', prop: 'password' }
+        { type: 'text', label: '地址', prop: 'address' }
       ],
-      data: null
+      data: null,
+      title: '用户详情'
     }
   },
   watch: {

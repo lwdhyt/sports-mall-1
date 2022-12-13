@@ -52,21 +52,8 @@ export const menuList = [
   {
     name: 'order',
     path: '/order',
-    meta: { title: '订单管理', icon: 'setting' },
-    children: [
-      {
-        name: 'orderInfo',
-        path: '/order/info',
-        component: '/order/info',
-        meta: { title: '订单信息', icon: false }
-      },
-      {
-        name: 'orderRobotCsp',
-        path: '/order/robotCsp',
-        component: '/order/robotCsp',
-        meta: { title: '机器人客服', icon: false }
-      }
-    ]
+    component: '/order',
+    meta: { title: '订单管理', icon: 'setting' }
   },
   {
     name: 'collect',

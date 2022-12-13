@@ -5,6 +5,7 @@
     background-color="#545c64"
     text-color="#fff"
     :router="true"
+    :default-openeds="defaultOpeneds"
     active-text-color="#ffd04b"
   >
     <template v-for="item in menuList">
@@ -37,6 +38,13 @@ export default {
   computed: {
     editableTabsValue() {
       return this.$route.path
+    },
+    defaultOpeneds() {
+      return this.menuList
+        .filter(item => item.children)
+        .map(item => {
+          return item.path
+        })
     }
   },
   methods: {

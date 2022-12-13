@@ -1,12 +1,12 @@
 <template>
   <div>
     <el-form class="form" ref="form" label-width="80px" label-position="left">
-      <template v-for="item in fromData">
-        <el-form-item class="from-item" v-if="item.type == 'input'" :label="item.name">
-          <el-input class="from-inp" placeholder="请输入" v-model="item.value"></el-input>
+      <template v-for="item in formData">
+        <el-form-item class="form-item" v-if="item.type == 'input'" :label="item.name">
+          <el-input class="form-inp" placeholder="请输入" v-model="item.value"></el-input>
         </el-form-item>
-        <el-form-item class="from-item" v-else-if="item.type == 'select'" :label="item.name">
-          <el-select class="from-inp" v-model="item.value" placeholder="请选择">
+        <el-form-item class="form-item" v-else-if="item.type == 'select'" :label="item.name">
+          <el-select class="form-inp" v-model="item.value" placeholder="请选择">
             <el-option
               :label="opt.text"
               v-for="opt in item.option"
@@ -15,9 +15,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item class="from-item" v-else-if="item.type == 'date'" :label="item.name">
+        <el-form-item class="form-item" v-else-if="item.type == 'date'" :label="item.name">
           <el-date-picker
-            class="from-inp"
+            class="form-inp"
             v-model="item.value"
             type="daterange"
             range-separator="至"
@@ -44,7 +44,7 @@
 <script>
 export default {
   props: {
-    fromData: {
+    formData: {
       type: Array,
       default: () => []
     },
@@ -61,7 +61,7 @@ export default {
   methods: {
     getValue() {
       const pream = {}
-      this.fromData.forEach(item => {
+      this.formData.forEach(item => {
         if (item.type == 'date') {
           if (item.value) {
             item.value[0] && (pream[item.key[0]] = item.value[0])
@@ -74,7 +74,7 @@ export default {
       return pream
     },
     reset() {
-      this.fromData.map(item => {
+      this.formData.map(item => {
         if (item.type == 'date') {
           item.value = []
         } else {
@@ -92,10 +92,10 @@ export default {
 .form {
   display: flex;
   flex-wrap: wrap;
-  .from-item {
+  .form-item {
     width: 350px;
     margin-right: 20px;
-    .from-inp {
+    .form-inp {
       width: 100%;
     }
   }

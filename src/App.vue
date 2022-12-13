@@ -12,7 +12,7 @@ export default {
 
   watch: {
     $route(to, from) {
-      if (to.path != '/login') {
+      if (!['/user/login', '/user/signUp'].includes(to.path)) {
         let obj = {
           name: to.name,
           meta: to.meta
