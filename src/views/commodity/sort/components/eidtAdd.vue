@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="编辑信息"
+    :title="pupType + '商品分类'"
     :visible.sync="childShow"
     :close-on-click-modal="false"
     width="600px"
@@ -15,7 +15,7 @@
 </template>
 <script>
 import FormLists from '@/components/formLists'
-import { editUserInfo } from '@/api/system'
+import { saveCommodityInfo, singleProductType } from '@/api/commodity'
 export default {
   components: { FormLists },
   model: {
@@ -32,20 +32,20 @@ export default {
     return {
       childShow: this.fatherShow,
       formArr: [
-        { type: 'upAvatar', label: '用户头像', prop: 'avatar', upType: 'img' },
-        { type: 'input', label: '用户名', prop: 'username', req: true },
+        { type: 'input', label: '分类名称', prop: 'name', valueName: 'name', req: true },
         {
-          type: 'radio',
-          label: '用户身份',
-          prop: 'userType',
-          req: true,
-          dict: this.$dict.system.userType
+          type: 'radioTree',
+          label: '父级',
+          prop: 'pid',
+          treeData: [],
+          value: 'id',
+          name: 'name',
+          disabled: true
         },
-        { type: 'input', label: '联系电话', prop: 'telephone', req: true, check: 'phone' },
-        { type: 'input', label: '邮箱', prop: 'email', req: true, check: 'email' },
-        { type: 'address', label: '地址', prop: 'address', req: true }
+        { type: 'input', label: '排序', prop: 'sortNum', req: true }
       ],
-      data: null
+      data: null,
+      treeData: null
     }
   },
   watch: {
@@ -54,35 +54,44 @@ export default {
         this.$refs.formlists.resetForm()
       } else {
         this.$nextTick(() => {
+          this.formArr.find(item => item.prop == 'pid').treeData = this.treeData
           this.$refs.formlists.echoData()
         })
       }
       this.childShow = val
+    },
+    treeData(val) {
+      if (val) {
+      }
     }
   },
-  computed: {},
+  computed: {
+    pupType() {
+      return this.data?.id ? '编辑' : '新增'
+    }
+  },
   methods: {
     close() {
       this.$emit('shoChange', false)
     },
     async confirm() {
-      console.log('1233')
-      // try {
-      const valid = await this.$refs.formlists.checkFrom()
-      console.log('1233', valid)
-      if (valid) {
-        const params = this.$refs.formlists.getData()
-        params.id = this.data.id
-        const res = await editUserInfo(params)
-        if (res.code == 200) {
-          this.$message.success('编辑成功')
-          this.close()
-          this.$emit('refresh')
-        } else {
-          this.$message.error(res.msg)
+      try {
+        const valid = await this.$refs.formlists.checkFrom()
+        if (valid) {
+          const params = this.$refs.formlists.getData()
+          params.pid = params.pid?.[params.pid?.length - 1]
+          params.classifyName = params.name
+          this.data?.id && (params.id = this.data.id)
+          const res = await singleProductType(params)
+          if (res.code == 200) {
+            this.$message.success(this.pupType + '成功')
+            this.close()
+            this.$emit('refresh')
+          } else {
+            this.$message.error(res.msg)
+          }
         }
-      }
-      // } catch (error) {}
+      } catch (error) {}
     }
   }
 }

@@ -32,7 +32,7 @@ export default {
     return {
       childShow: this.fatherShow,
       formArr: [
-        { type: 'upload', label: '用户头像', prop: 'avatar', upType: 'img' },
+        { type: 'upAvatar', label: '用户头像', prop: 'avatar', upType: 'img' },
         { type: 'input', label: '用户名', prop: 'username', req: true },
         {
           type: 'radio',

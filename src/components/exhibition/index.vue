@@ -22,14 +22,7 @@
 
         <template v-else-if="item.type == 'img'">
           <el-image
-            v-if="item.url"
-            style="width: 200px; height: 100px"
-            :src="ruleForm[item.prop]?.[item.url]"
-            :preview-src-list="[ruleForm[item.prop]?.[item.url]]"
-          >
-          </el-image>
-          <el-image
-            v-else
+            v-if="ruleForm[item.prop]"
             style="width: 200px; height: 100px"
             :src="ruleForm[item.prop]"
             :preview-src-list="[ruleForm[item.prop]]"
@@ -38,20 +31,9 @@
         </template>
         <template v-else-if="item.type == 'imgs'">
           <el-image
-            v-if="item.url"
+            v-if="ruleForm[item.prop]?.[0]"
             style="width: 200px; height: 100px"
-            :src="ruleForm[item.prop][0]?.[item.url]"
-            :preview-src-list="
-              ruleForm[item.prop]?.map(i => {
-                return i[item.url]
-              })
-            "
-          >
-          </el-image>
-          <el-image
-            v-else
-            style="width: 200px; height: 100px"
-            :src="ruleForm[item.prop][0]"
+            :src="ruleForm[item.prop]?.[0]"
             :preview-src-list="ruleForm[item.prop]"
           >
           </el-image>

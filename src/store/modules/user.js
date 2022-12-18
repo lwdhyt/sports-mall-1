@@ -1,20 +1,37 @@
 import storage from 'store'
-import { login, logout } from '@/api/user.js'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { login, logout, getUserInfoByToken } from '@/api/user.js'
+import { ACCESS_TOKEN, STORAGE_ACCOUNT } from '@/store/mutation-types'
 
 const user = {
   state: {
-    token: ''
+    token: '',
+    userInfo: null,
+    accountArr: []
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_USERINFO: (state, userInfo) => {
+      state.userInfo = userInfo
+    },
+    SET_ACCOUNTARR: (state, accountArr) => {
+      storage.set(STORAGE_ACCOUNT, window.btoa(JSON.stringify(accountArr)))
+      state.accountArr = accountArr
     }
   },
   getters: {
     getToken(state) {
       return storage.get(ACCESS_TOKEN) || state.token
+    },
+    getUserInfo(state) {
+      return state.userInfo
+    },
+    getAccountArr(state) {
+      return window.atob(storage.get(STORAGE_ACCOUNT))
+        ? JSON.parse(window.atob(storage.get(STORAGE_ACCOUNT)))
+        : state.accountArr
     }
   },
   actions: {
@@ -38,13 +55,24 @@ const user = {
 
     // 获取用户信息
     GetInfo({ commit }) {
-      return new Promise((resolve, reject) => {})
+      return new Promise((resolve, reject) => {
+        getUserInfoByToken()
+          .then(res => {
+            const userInfo = res.data
+            commit('SET_USERINFO', userInfo)
+            resolve(res)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
     },
 
     // 登出
     Logout({ commit, state }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
+        commit('SET_USERINFO', null)
         storage.remove(ACCESS_TOKEN)
         resolve()
       })

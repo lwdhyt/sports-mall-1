@@ -27,7 +27,9 @@ export default {
   data() {
     return {
       iconKey: {
-        home: { type: 'img', value: require('@/assets/icon/home.png') }
+        home: { type: 'img', value: require('@/assets/icon/home.png') },
+        collYes: { type: 'img', value: require('@/assets/icon/collect-yes.png') },
+        collNo: { type: 'img', value: require('@/assets/icon/collect-no.png') }
       }
     }
   },

@@ -68,3 +68,12 @@ export function deleteLog(id) {
     method: 'DELETE'
   })
 }
+
+// 获取分类树
+export function getTypeTree(parameter) {
+  return request({
+    url: `/api/singleProductType/tree`,
+    method: 'GET',
+    data: parameter
+  })
+}

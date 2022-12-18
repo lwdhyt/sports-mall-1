@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import home from '../views/home/'
-import store from '../store'
+import store from '@/store'
 import storage from 'store'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { menuList } from '@/config/menu'
+import { getUserInfoByToken } from '@/api/user'
 
 Vue.use(VueRouter)
 const originalPush = VueRouter.prototype.push
@@ -34,6 +35,37 @@ const routes = [
         component: () => import('@/views/user/signUp')
       }
     ]
+  },
+  {
+    path: '/client',
+    component: () => import('@/views/client'),
+    children: [
+      {
+        path: 'home',
+        name: 'home',
+        component: () => import('@/views/client/home')
+      },
+      {
+        path: 'placeOrder',
+        name: 'placeOrder',
+        component: () => import('@/views/client/placeOrder')
+      },
+      {
+        path: 'record',
+        name: 'record',
+        component: () => import('@/views/client/record')
+      },
+      {
+        path: 'orderCenter',
+        name: 'orderCenter',
+        component: () => import('@/views/client/orderCenter')
+      },
+      {
+        path: 'collection',
+        name: 'collection',
+        component: () => import('@/views/client/home')
+      }
+    ]
   }
 ]
 
@@ -43,47 +75,76 @@ const router = new VueRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  // 防止重复添加路由
-  let hasRoute = store.getters.getHasRoutes
+router.beforeEach(async (to, from, next) => {
   // 获取token
   let token = storage.get(ACCESS_TOKEN)
-
+  const isClient = to.path.indexOf('/client/') != -1
   // 白名单(不需要登录就可以访问的名单)
   const whiteList = ['/user/login', '/user/signUp']
   if (token) {
-    if (hasRoute) {
-      next()
-    } else {
-      let newRoutes = router.options.routes
-      menuList.forEach(menu => {
-        if (menu.children) {
-          menu.children.forEach(e => {
-            // 转成路由
-            let route = menuToRoute(e)
+    let userInfo = store.getters.getUserInfo
+    if (!userInfo) {
+      // 获取用户信息
+      userInfo = await getUserInfoByToken().then(res => res.data)
+      store.commit('SET_USERINFO', userInfo)
+      // 添加路由
+      if (userInfo.userType == 1) {
+        let newRoutes = router.options.routes
+        menuList.forEach(menu => {
+          if (menu.children) {
+            menu.children.forEach(e => {
+              // 转成路由
+              let route = menuToRoute(e)
+              // 把路由添加到路由管理中
+              if (route) {
+                newRoutes[0].children.push(route)
+              }
+            })
+          } else {
+            let route = menuToRoute(menu)
             // 把路由添加到路由管理中
             if (route) {
               newRoutes[0].children.push(route)
             }
-          })
-        } else {
-          let route = menuToRoute(menu)
-          // 把路由添加到路由管理中
-          if (route) {
-            newRoutes[0].children.push(route)
           }
+        })
+        for (let x of newRoutes) {
+          router.addRoute(x)
         }
-      })
-      for (let x of newRoutes) {
-        router.addRoute(x)
+        if ([...whiteList, '/'].includes(to.path)) {
+          next('/homePage')
+        } else {
+          next({ ...to, replace: true })
+        }
+      } else {
+        if ([...whiteList, ...['/', '/client']].includes(to.path)) {
+          next('/client/home')
+        } else if (isClient) {
+          next()
+        }
       }
-      hasRoute = true
-      store.commit('changeRouteStatus', hasRoute)
-      next({ ...to, replace: true })
+    } else {
+      if (userInfo.userType == 1) {
+        console.log('1231', [...whiteList, '/'].includes(to.path))
+        if ([...whiteList, '/'].includes(to.path)) {
+          next('/homePage')
+        } else {
+          next()
+        }
+      } else {
+        if ([...whiteList, ...['/', '/client']].includes(to.path)) {
+          next('/client/home')
+        } else if (isClient) {
+          next()
+        }
+      }
     }
   } else {
-    if (whiteList.includes(to.path)) {
+    console.log('123465', whiteList.includes(to.path) || isClient)
+    if (whiteList.includes(to.path) || isClient) {
       next()
+    } else if (to.path == '/client') {
+      next('/client/home')
     } else {
       next(`/user/login`)
     }

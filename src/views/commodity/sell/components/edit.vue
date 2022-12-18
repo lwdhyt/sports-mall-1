@@ -16,6 +16,7 @@
 <script>
 import FormLists from '@/components/formLists'
 import { saveCommodityInfo } from '@/api/commodity'
+import { getTypeTree } from '@/api/system'
 export default {
   components: { FormLists },
   model: {
@@ -34,19 +35,17 @@ export default {
       formArr: [
         { type: 'input', label: '商品名称', prop: 'productName', req: true },
         { type: 'input', label: '品牌商', prop: 'brandingBusiness', req: true },
-        // {
-        //   type: 'input',
-        //   label: '商品主图',
-        //   prop: 'sysFile',
-        //   req: true
-        // },
-        // {
-        //   type: 'input',
-        //   label: '商品主图',
-        //   prop: 'sysFileList',
-        //   req: true
-        // },
-        { type: 'input', label: '商品分类', prop: 'productType', req: true },
+        { type: 'upImg', label: '商品主图', prop: 'sysFilePath' },
+        { type: 'upImgList', label: '商品展示图', prop: 'sysFileListPath' },
+        {
+          type: 'radioTree',
+          label: '商品分类',
+          prop: 'productTypeId',
+          treeData: [],
+          value: 'id',
+          name: 'name',
+          req: true
+        },
         { type: 'input', label: '进价', prop: 'purchasingPrice', req: true },
         { type: 'input', label: '原价', prop: 'originalPrice', req: true },
         { type: 'input', label: '促销价', prop: 'promotionPrice', req: true },
@@ -60,6 +59,7 @@ export default {
       if (!val) {
         this.$refs.formlists.resetForm()
       } else {
+        this.getTreeData()
         this.$nextTick(() => {
           this.$refs.formlists.echoData()
         })
@@ -76,12 +76,18 @@ export default {
     close() {
       this.$emit('shoChange', false)
     },
+    async getTreeData() {
+      try {
+        const res = await getTypeTree()
+        const treeData = res.data
+        this.formArr.find(item => item.prop == 'productTypeId').treeData = treeData
+      } catch (error) {}
+    },
     async confirm() {
       try {
         const valid = await this.$refs.formlists.checkFrom()
         if (valid) {
-          const params = this.$refs.formlists.getData()
-          this.data && (params.id = this.data.id)
+          const params = this.dataHandel()
           const res = await saveCommodityInfo(params)
           if (res.code == 200) {
             this.$message.success(this.pupType + '成功')
@@ -92,6 +98,18 @@ export default {
           }
         }
       } catch (error) {}
+    },
+    dataHandel() {
+      const params = this.$refs.formlists.getData()
+      this.data && (params.id = this.data.id)
+      params.productTypeId = params.productTypeId?.[params.productTypeId.length - 1]
+      params.sysFile = {}
+      params.sysFileList = []
+      params.sysFile.filePath = params.sysFilePath
+      params.sysFileListPath.forEach(item => {
+        params.sysFileList.push({ filePath: item })
+      })
+      return params
     }
   }
 }

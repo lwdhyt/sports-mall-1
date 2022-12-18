@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" :rules="rules" ref="ruleForm" class="ruleForm">
+  <el-form :model="form" :rules="rules" ref="ruleForm" class="ruleForm" :class="{ default: !wrap }">
     <el-form-item prop="areaAddress">
       <el-cascader
         :options="areaSelectData"
@@ -27,6 +27,10 @@ export default {
     address: {
       type: String,
       default: ''
+    },
+    wrap: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -108,9 +112,16 @@ export default {
 <style lang="scss" scoped>
 .ruleForm {
   width: 100%;
-  display: flex;
+  .full-width {
+    margin-bottom: 5px;
+    width: 100%;
+  }
 }
-.full-width {
-  margin-right: 10px;
+.default {
+  display: flex;
+  .full-width {
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
 }
 </style>

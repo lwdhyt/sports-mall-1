@@ -48,7 +48,7 @@ export default {
         {
           type: 'input',
           name: '商品分类',
-          key: 'productTypeId',
+          key: 'productType',
           value: ''
         },
         {
@@ -137,12 +137,21 @@ export default {
         this.edit(data.row)
       }
     },
+    dataHandel(row) {
+      const newRow = JSON.parse(JSON.stringify(row))
+      newRow.sysFilePath = newRow.sysFile.filePath
+      newRow.sysFileListPath = []
+      newRow.sysFileList?.forEach(item => {
+        newRow.sysFileListPath.push(item.filePath)
+      })
+      return newRow
+    },
     goDetails(row) {
-      this.$refs.detail.data = row
+      this.$refs.detail.data = this.dataHandel(row)
       this.detailsShow = true
     },
     edit(row) {
-      this.$refs.edit.data = row
+      this.$refs.edit.data = this.dataHandel(row)
       this.editShow = true
     },
     async getData() {

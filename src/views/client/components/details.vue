@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="商品详情"
+    :title="title"
     :visible.sync="childShow"
     :close-on-click-modal="false"
     width="600px"
@@ -27,17 +27,15 @@ export default {
     return {
       childShow: this.fatherShow,
       formArr: [
-        { type: 'text', label: '商品名称', prop: 'productName' },
-        { type: 'text', label: '品牌商', prop: 'brandingBusiness' },
-        { type: 'img', label: '商品主图', prop: 'sysFilePath' },
-        { type: 'imgs', label: '商品展示图', prop: 'sysFileListPath' },
-        { type: 'text', label: '商品分类', prop: 'productType' },
-        { type: 'text', label: '进价', prop: 'purchasingPrice' },
-        { type: 'text', label: '原价', prop: 'originalPrice' },
-        { type: 'text', label: '促销价', prop: 'promotionPrice' },
-        { type: 'text', label: '排序', prop: 'sortNum' }
+        { type: 'img', label: '用户头像', prop: 'avatar' },
+        { type: 'text', label: '用户名', prop: 'username' },
+        { type: 'text', label: '用户身份', prop: 'userType', dict: this.$dict.system.userType },
+        { type: 'text', label: '联系电话', prop: 'telephone' },
+        { type: 'text', label: '邮箱', prop: 'email' },
+        { type: 'text', label: '地址', prop: 'address' }
       ],
-      data: null
+      data: null,
+      title: '用户详情'
     }
   },
   watch: {

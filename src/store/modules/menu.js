@@ -5,8 +5,6 @@ Vue.use(Vuex)
 
 export default {
   state: {
-    hasRoutes: false,
-
     editableTabsValue: 'homePage',
     editableTabs: [
       {
@@ -16,15 +14,8 @@ export default {
       }
     ]
   },
-  getters: {
-    getHasRoutes(state) {
-      return state.hasRoutes
-    }
-  },
+  getters: {},
   mutations: {
-    changeRouteStatus(state, hasRoutes) {
-      state.hasRoutes = hasRoutes
-    },
     addTab(state, tab) {
       let index = state.editableTabs.findIndex(e => e.name === tab.name)
 
@@ -37,7 +28,6 @@ export default {
       state.editableTabsValue = tab.name
     },
     resetState: state => {
-      state.hasRoutes = false
       state.editableTabsValue = 'homePage'
       state.editableTabs = [
         {

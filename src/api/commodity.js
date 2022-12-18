@@ -57,3 +57,20 @@ export function changeSellState(id) {
     method: 'GET'
   })
 }
+
+// 新增编辑商品分类
+export function singleProductType(parameter) {
+  return request({
+    url: '/api/singleProductType/saveOrUpdate',
+    method: 'POST',
+    data: parameter
+  })
+}
+
+// 删除商品分类
+export function deleteCommodityType(id) {
+  return request({
+    url: `/api/singleProductType/remove/${id}`,
+    method: 'DELETE'
+  })
+}

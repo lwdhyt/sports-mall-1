@@ -92,7 +92,7 @@ export default {
           btn: [
             { key: 'details', name: '详情' },
             { key: 'edit', name: '编辑' },
-            { key: 'upDown', name: '启用/禁用' },
+            { key: 'upDown', dict: { 1: '禁用', 2: '启用' }, link: 'userStatus' },
             { key: 'delete', name: '删除' }
           ]
         }

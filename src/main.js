@@ -6,6 +6,8 @@ import ElementUI from 'element-ui'
 
 import Icons from '@/components/icons'
 import 'element-ui/lib/theme-chalk/index.css'
+
+import bootstrap from './config/bootstrap'
 import './assets/common.scss'
 import dict from './dict'
 
@@ -18,5 +20,6 @@ Vue.config.productionTip = false
 new Vue({
   router,
   store,
+  created: bootstrap,
   render: h => h(App)
 }).$mount('#app')

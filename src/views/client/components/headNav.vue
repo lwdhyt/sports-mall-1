@@ -1,15 +1,21 @@
 <template>
   <div class="headNav">
     <div class="pro-name">运动用品购物管理后台</div>
+    <div class="search">
+      <el-input v-model="searchValue" placeholder="请输入搜索内容"></el-input>
+      <el-button type="primary" @click="search">搜索</el-button>
+    </div>
     <div class="info">
-      <div class="log imges"><img :src="userInfo?.avatar" alt="" /></div>
       <div class="name">欢迎您{{ userInfo?.username }}</div>
-      <el-dropdown trigger="click" @command="handleCommand">
+      <el-dropdown @command="handleCommand">
         <div class="avatar imges"><img :src="userInfo?.avatar" alt="" /></div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="info">个人信息</el-dropdown-item>
+          <el-dropdown-item command="editInfo">修改资料</el-dropdown-item>
           <el-dropdown-item command="editPassWord">修改密码</el-dropdown-item>
-          <el-dropdown-item command="loginLog">登录日志</el-dropdown-item>
+          <el-dropdown-item command="myCollect">我的收藏</el-dropdown-item>
+          <el-dropdown-item command="orderCenter">订单中心</el-dropdown-item>
+          <el-dropdown-item command="lookRecord">浏览记录</el-dropdown-item>
           <el-dropdown-item command="signOut">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -32,7 +38,8 @@ export default {
     return {
       detailsShow: false,
       editShow: false,
-      editPassShow: false
+      editPassShow: false,
+      searchValue: ''
     }
   },
   computed: {
@@ -52,10 +59,17 @@ export default {
         this.loginLog()
       } else if (command == 'signOut') {
         this.signOut()
+      } else if (command == 'editInfo') {
+        this.edit()
+      } else if (command == 'myCollect') {
+        this.$router.push('/client/collection')
       }
     },
     async getUserInfo() {
       this.GetInfo()
+    },
+    search() {
+      this.$store.commit('SET_SEARCHTEXT', this.searchValue)
     },
     info() {
       this.$refs.detail.data = this.userInfo
@@ -63,11 +77,8 @@ export default {
       this.detailsShow = true
     },
     edit() {
-      this.detailsShow = false
       this.$refs.edit.data = this.userInfo
-      setTimeout(() => {
-        this.editShow = true
-      }, 200)
+      this.editShow = true
     },
     editPassWord() {
       this.$refs.editPass.data = this.userInfo
@@ -96,7 +107,7 @@ export default {
 <style lang="scss" scoped>
 .headNav {
   width: 100%;
-  height: 72px;
+  height: 82px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -132,6 +143,13 @@ export default {
     }
     .log {
       height: 50px;
+    }
+  }
+  .search {
+    width: 500px;
+    display: flex;
+    ::v-deep.el-input {
+      border-radius: 5px 0 0 5px !important;
     }
   }
 }

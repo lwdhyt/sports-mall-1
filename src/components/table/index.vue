@@ -4,7 +4,6 @@
     :border="true"
     v-loading="loading"
     style="width: 100%"
-    height="250"
     :cell-style="{ 'text-align': 'center' }"
     :header-cell-style="{ 'text-align': 'center' }"
   >
@@ -25,7 +24,7 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="btn in item.btn" :key="btn.key" :command="btn.key">{{
-                btn.name
+                btn.dict ? btn.dict[scope.row[btn.link]] : btn.name
               }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>

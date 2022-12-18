@@ -54,7 +54,7 @@ export default {
         {
           type: 'input',
           name: '商品分类',
-          key: 'productTypeId',
+          key: 'productType',
           value: ''
         },
         {
@@ -82,7 +82,7 @@ export default {
         { key: 'productType', label: '商品分类' },
         { key: 'isRecommend', label: '推荐商品', dict: this.$dict.commodity.isRecommend },
         { key: 'brandingBusiness', label: '品牌商' },
-        { key: 'productStatus', label: '商品状态', dict: this.$dict.commodity.state },
+        { key: 'productStatusStr', label: '商品状态' },
         { key: 'originalPrice', label: '原价' },
         { key: 'promotionPrice', label: '促销价' },
         { key: 'updateTime', label: '更新时间' },
@@ -93,9 +93,9 @@ export default {
           btn: [
             { key: 'details', name: '详情' },
             { key: 'edit', name: '编辑' },
-            { key: 'upDown', name: '上架/下架' },
+            { key: 'upDown', dict: { 2: '上架', 1: '下架' }, link: 'productStatus' },
             { key: 'delete', name: '删除' },
-            { key: 'sell', name: '推荐/取消' }
+            { key: 'sell', dict: { 0: '推荐', 1: '取消推荐' }, link: 'isRecommend' }
           ]
         }
       ],
@@ -153,12 +153,21 @@ export default {
         this.sell(data.row)
       }
     },
+    dataHandel(row) {
+      const newRow = JSON.parse(JSON.stringify(row))
+      newRow.sysFilePath = newRow.sysFile.filePath
+      newRow.sysFileListPath = []
+      newRow.sysFileList?.forEach(item => {
+        newRow.sysFileListPath.push(item.filePath)
+      })
+      return newRow
+    },
     goDetails(row) {
-      this.$refs.detail.data = row
+      this.$refs.detail.data = this.dataHandel(row)
       this.detailsShow = true
     },
     edit(row) {
-      this.$refs.edit.data = row
+      this.$refs.edit.data = this.dataHandel(row)
       this.editShow = true
     },
     changeState(row) {
