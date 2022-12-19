@@ -15,7 +15,7 @@
         ></el-input>
       </template>
 
-      <template v-if="item.type == 'password'">
+      <template v-else-if="item.type == 'password'">
         <el-input
           show-password
           clearable
@@ -91,6 +91,12 @@
       <template v-else-if="item.type == 'address'">
         <Distpicker ref="distpicker" :wrap="item.wrap" v-model="ruleForm[item.prop]"></Distpicker>
       </template>
+      <template v-else-if="item.type == 'rete'">
+        <el-rate class="rete" v-model="ruleForm[item.prop]" show-text> </el-rate>
+      </template>
+      <template v-else-if="item.type == 'textarea'">
+        <el-input type="textarea" v-model="ruleForm[item.prop]"></el-input>
+      </template>
     </el-form-item>
   </el-form>
 </template>
@@ -163,7 +169,12 @@ export default {
     // 添加字段及校验
     addFromField() {
       this.formArr.forEach(item => {
-        this.$set(this.ruleForm, item.prop, '')
+        if (item.type == 'rete') {
+          this.$set(this.ruleForm, item.prop, 0)
+        } else {
+          this.$set(this.ruleForm, item.prop, '')
+        }
+
         if (item.req) {
           let check = []
           if (item.check) {
@@ -326,5 +337,9 @@ export default {
 }
 .avatar-uploader {
   line-height: 0;
+}
+.rete {
+  position: relative;
+  top: 10px;
 }
 </style>

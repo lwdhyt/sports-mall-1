@@ -63,6 +63,10 @@ export default {
         this.edit()
       } else if (command == 'myCollect') {
         this.$router.push('/client/collection')
+      } else if (command == 'orderCenter') {
+        this.$router.push('/client/orderCenter')
+      } else if (command == 'lookRecord') {
+        this.$router.push('/client/record')
       }
     },
     async getUserInfo() {
