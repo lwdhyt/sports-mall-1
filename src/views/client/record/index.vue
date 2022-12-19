@@ -14,7 +14,7 @@
       class="flex-fill"
     ></Table>
     <Pagination ref="page" :total="total" class="flex-bot"></Pagination>
-    <!-- <Details ref="detail" v-model="detailsShow"></Details> -->
+    <Details ref="detail" v-model="detailsShow"></Details>
     <!-- <Edit ref="edit" v-model="editShow" @refresh="getData"></Edit> -->
   </div>
 </template>
@@ -24,12 +24,12 @@ import SearchFrom from '@/components/searchFrom'
 import Table from '@/components/table'
 import Pagination from '@/components/pagination'
 import { getRecirds, removeViewRecord } from '@/api/client'
-// import Details from './components/details.vue'
+import Details from './components/details.vue'
 // import Edit from './components/edit.vue'
 export default {
   name: 'commodity-info',
   // Details, Edit
-  components: { SearchFrom, Table, Pagination },
+  components: { SearchFrom, Table, Pagination, Details },
   data() {
     return {
       formData: [

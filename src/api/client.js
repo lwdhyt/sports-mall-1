@@ -25,7 +25,7 @@ export function switchCollectState(parameter) {
   })
 }
 // 获取收藏商品
-export function getCollectCommoditys(parameter) {
+export function getCollectCommoditys(parameter, paging) {
   return request({
     url: `/api/userHomes/listCollectComment`,
     method: 'POST',

@@ -99,7 +99,7 @@ export default {
       })
         .then(() => {
           this.Logout().then(() => {
-            window.location.reload()
+            this.$router.push('/user/login')
           })
         })
         .catch(() => {})

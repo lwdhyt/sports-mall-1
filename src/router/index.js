@@ -63,7 +63,7 @@ const routes = [
       {
         path: 'collection',
         name: 'collection',
-        component: () => import('@/views/client/home')
+        component: () => import('@/views/client/myCollect')
       }
     ]
   }

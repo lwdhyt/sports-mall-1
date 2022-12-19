@@ -1,6 +1,5 @@
 <template>
   <div class="box">
-    <div v-if="name == 'collection'">我的收藏：</div>
     <div class="commodity-box" v-for="item in commoditys" :key="item.id">
       <div class="pic"><img :src="item.sysFile?.filePath" alt="" /></div>
       <div class="info info1">
@@ -24,7 +23,7 @@
   </div>
 </template>
 <script>
-import { getCommoditys, switchCollectState, getCollectCommoditys } from '@/api/client'
+import { getCommoditys, switchCollectState } from '@/api/client'
 export default {
   data() {
     return {
@@ -37,9 +36,6 @@ export default {
     },
     searchValue() {
       return this.$store.getters.getSearchText
-    },
-    name() {
-      return this.$route.name
     },
     refresh() {
       const { productType, searchValue, name } = this
@@ -57,10 +53,9 @@ export default {
   methods: {
     async getData() {
       try {
-        const inter = this.name == 'collection' ? getCollectCommoditys : getCommoditys
         const param = this.productType ? { productTypeId: this.productType } : { isRecommend: 1 }
         param.productName = this.searchValue
-        this.commoditys = await inter(param).then(res => res.data)
+        this.commoditys = await getCommoditys(param).then(res => res.data)
       } catch (error) {}
     },
     async collect(item) {
