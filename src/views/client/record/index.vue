@@ -131,6 +131,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .flex-col-box {
+  padding: 30px;
   display: flex;
   flex-direction: column;
   height: 100%;
