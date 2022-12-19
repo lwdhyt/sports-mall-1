@@ -48,7 +48,6 @@ export default {
         {
           key: 'operate',
           label: '操作',
-          fixed: 'right',
           btn: [
             { key: 'details', name: '详情' },
             { key: 'delete', name: '删除' }
@@ -137,6 +136,7 @@ export default {
   height: 100%;
   .flex-fill {
     margin: 30px 0;
+    overflow: auto;
   }
   .flex-bot {
     margin-bottom: 30px;

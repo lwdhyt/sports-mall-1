@@ -2,7 +2,6 @@
   <div class="headNav">
     <div class="pro-name">运动用品购物管理后台</div>
     <div class="info">
-      <div class="log imges"><img :src="userInfo?.avatar" alt="" /></div>
       <div class="name">欢迎您{{ userInfo?.username }}</div>
       <el-dropdown trigger="click" @command="handleCommand">
         <div class="avatar imges"><img :src="userInfo?.avatar" alt="" /></div>

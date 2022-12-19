@@ -7,7 +7,7 @@
     :cell-style="{ 'text-align': 'center' }"
     :header-cell-style="{ 'text-align': 'center' }"
   >
-    <el-table-column fixed label="#" type="index" width="50"> </el-table-column>
+    <el-table-column label="#" type="index" width="50"> </el-table-column>
     <el-table-column
       v-for="item in tableRow"
       :key="item.key"

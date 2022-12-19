@@ -1,5 +1,5 @@
 <template>
-  <div class="commodity-sort">
+  <div class="commodity-sort flex-col-box">
     <div class="top-btn">
       <el-button size="mini" type="primary" @click="add">新增商品分类</el-button>
     </div>
@@ -8,6 +8,7 @@
       :treeData="treeData"
       :loading="loading"
       @operateEvent="operateEvent"
+      class="flex-fill"
     ></TreeTable>
     <EidtAdd ref="editAdd" v-model="editAddShow" @refresh="getData"></EidtAdd>
   </div>
@@ -88,6 +89,7 @@ export default {
       this.editAddShow = true
     },
     addSub(row) {
+      console.log('row', row.id)
       this.$refs.editAdd.data = { pid: row.id }
       this.$refs.editAdd.treeData = this.treeData
       this.editAddShow = true
@@ -98,5 +100,20 @@ export default {
 <style lang="scss" scoped>
 .top-btn {
   margin-bottom: 30px;
+}
+.flex-col-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  .flex-fill {
+    margin: 30px 0;
+    flex: 1;
+    overflow: auto;
+  }
+  .flex-bot {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: right;
+  }
 }
 </style>

@@ -6,7 +6,7 @@
       row-key="id"
       v-loading="loading"
       border
-      default-expand-all
+      :expand-row-keys="[]"
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     >
       <el-table-column
@@ -16,6 +16,7 @@
         :label="item.label"
         :width="item.width"
         :prop="item.key"
+        :default-expand-all="false"
       >
         <template slot-scope="scope">
           <template v-if="item.key == 'operate'">

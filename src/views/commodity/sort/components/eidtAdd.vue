@@ -79,7 +79,8 @@ export default {
         const valid = await this.$refs.formlists.checkFrom()
         if (valid) {
           const params = this.$refs.formlists.getData()
-          params.pid = params.pid?.[params.pid?.length - 1]
+
+          params.pid = Array.isArray(params.pid) ? params.pid?.[params.pid?.length - 1] : params.pid
           params.classifyName = params.name
           this.data?.id && (params.id = this.data.id)
           const res = await singleProductType(params)

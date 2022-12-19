@@ -46,9 +46,9 @@ const routes = [
         component: () => import('@/views/client/home')
       },
       {
-        path: 'placeOrder',
-        name: 'placeOrder',
-        component: () => import('@/views/client/placeOrder')
+        path: 'commodityDetails',
+        name: 'commodityDetails',
+        component: () => import('@/views/client/commodityDetails')
       },
       {
         path: 'record',
