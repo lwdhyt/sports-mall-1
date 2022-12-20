@@ -76,7 +76,7 @@ export default {
       this.$router.push({ name: 'systemLog', params: { username: this.userInfo.username } })
     },
     signOut() {
-      this.$confirm('确认推出登录？', '提示', {
+      this.$confirm('确认退出登录？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

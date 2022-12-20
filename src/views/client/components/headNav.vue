@@ -1,6 +1,6 @@
 <template>
   <div class="headNav">
-    <div class="pro-name">运动用品购物管理后台</div>
+    <div class="pro-name">运动商品购物管理后台</div>
     <div class="search">
       <el-input v-model="searchValue" placeholder="请输入搜索内容"></el-input>
       <el-button type="primary" @click="search">搜索</el-button>
@@ -92,7 +92,7 @@ export default {
       this.$router.push({ name: 'systemLog', params: { username: this.userInfo.username } })
     },
     signOut() {
-      this.$confirm('确认推出登录？', '提示', {
+      this.$confirm('确认退出登录？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
