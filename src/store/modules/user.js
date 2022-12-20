@@ -30,7 +30,12 @@ const user = {
     },
     getAccountArr(state) {
       return storage.get(STORAGE_ACCOUNT) && decodeURIComponent(storage.get(STORAGE_ACCOUNT))
-        ? JSON.parse(window.btoa(decodeURIComponent(storage.get(STORAGE_ACCOUNT))))
+        ? JSON.parse(
+            window
+              .atob(decodeURIComponent(storage.get(STORAGE_ACCOUNT)))
+              .replace(/%5B/g, '[')
+              .replace(/%5D/g, ']')
+          )
         : state.accountArr
     }
   },
